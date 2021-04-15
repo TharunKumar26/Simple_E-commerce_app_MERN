@@ -60,6 +60,75 @@ Product.save().then(()=>{
 var Shoes = require('./Routes/Shoes');
 
 
+app.post('/signup', (req,res)=>{
+    const {name , email, password} = req.body;
+    if(!name || !email || !password)
+    {
+        res.send('please fill all fields')
+    }
+    else{
+        User.findOne({email : email})
+            .then(user =>{
+                if(user){
+                    res.send("Email already taken")
+                }
+                else{
+                    const newUser = new User({
+                        name,
+                        email,
+                        password
+                    })
+                    newUser.save()
+                            .then(()=>{
+                                req.session.isLoggedin = true;
+                                req.session.user = user;
+                                req.session.save()
+                            });
+                        res.send("Successfully Registered")
+                }
+            }).catch(err =>{
+
+                res.send(err)
+            })
+    }
+})
+
+
+
+app.post('/signup', (req,res)=>{
+    const {name , email, password} = req.body;
+    if(!name || !email || !password)
+    {
+        res.send('please fill all fields')
+    }
+    else{
+        User.findOne({email : email})
+            .then(user =>{
+                if(!user){
+                    res.send("Account doesnot exist")
+                }
+                else{
+                    if(password == user.password)
+                    {
+                      
+                                req.session.isLoggedin = true;
+                                req.session.user = user;
+                                req.session.save()
+                    
+
+                    }
+                    
+                    
+                        res.send("Successfully loggedin")
+                }
+            }).catch(err =>{
+
+                res.send(err)
+            })
+    }
+})
+
+
 app.use('/shoes',  Shoes)
 
 app.get('/', (req,res)=>{
